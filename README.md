@@ -1,151 +1,163 @@
-# [Deep Learning Project Template] Title of Your Term Paper/Project
+# WF-Diff Extensions: Improving Underwater Image Restoration Metrics
+
 ## Project Metadata
-### Authors
-- **Team:** ABC
+### Authors 
+- **Team:** Abdulaziz Alfaraj, Hassan Al Nasser, Mohammed Al Naser​
 - **Supervisor Name:** Dr. Muzammil Behzad
 - **Affiliations:** KFUPM
 
+---
+
 ## Introduction
-Deepfake and image-tampering detectors look great on clean test sets, but real-world photos don’t stay clean. People can re-save images to shift JPEG blocks, apply tiny warps to hide resampling traces, use AI fills to smooth seams, or run the file through social apps that strip useful camera noise. In low-light or surveillance footage (often compressed or infrared), these small edits can quietly break today’s detectors.
+Underwater images often suffer from **color cast**, **low contrast**, **blur**, and **loss of fine details** due to light absorption and scattering in water. These degradations reduce both visual quality and downstream performance for underwater applications such as inspection, robotics, and tracking.
 
-AN INTRODUCTORY IMAGE GOES HERE
+WF-Diff is a strong Underwater Image Enhancement/Restoration (UIE/UIR) framework that combines:
+1. **Frequency-domain processing** (Wavelet + Fourier interaction) for preliminary enhancement.
+2. **Diffusion-based refinement** in frequency space to recover high-frequency details and improve realism.
 
-UnFooled tackles this by training the model to expect attacks. We:
-1. Practice against a red team of common counter-forensics during training.
-2. Combine content cues (what’s in the picture) with physics-like cues (noise patterns, resampling artifacts).
-3. Use randomized checks at test time (slight crops/resizes/recompressions) and vote on the result.
-The goal: a detector that stays accurate, well-calibrated, and explainable—even when the forger fights back.
+In this project, we build on top of WF-Diff’s public implementation and aim to contribute **research-driven improvements** that enhance image restoration performance (quantitative metrics + qualitative visual quality) under consistent evaluation settings.
+
+**Introductory image (add to your repo, then link it here):**
+![WF-Diff Overview](assets/intro.png)
+
+---
 
 ## Problem Statement
-We treat the task as (a) real vs. fake and (b) where is it fake (a heatmap), even after the image has been tweaked to fool us. Attackers may know our model (white-box), know our general tricks (gray-box), or only see outputs (black-box). They must keep changes hard to notice while keeping the edited content.
+We treat underwater image restoration as an **image-to-image enhancement** task:
 
-We assume messy “chain of custody” (e.g., WhatsApp/Telegram recompression) and surveillance quirks (rolling shutter, LED flicker, NIR).
-Our questions:
+- **Input:** degraded underwater image
+- **Output:** enhanced/restored image with reduced color distortion and improved texture/detail
 
-Q1: Which counter-forensics hurt most, and by how much?
+Because the field can be sensitive to evaluation settings (e.g., full-resolution testing vs resizing), we will report results under clearly stated protocols and focus on improvements measurable by standard restoration metrics.
 
-Q2: Does training with a mix of attacks improve worst-case robustness, not just average scores?
+**Evaluation metrics (commonly used for UIEB/LSUI and related UIE benchmarks):**
+- **PSNR / SSIM** (paired quality)
+- **LPIPS / FID** (perceptual similarity / realism)
+- Optional non-reference metrics (for unpaired test sets): **UIQM / UCIQE** (if applicable)
 
-Q3: Do small random test-time jitters reduce attack transfer without being slow—and can we abstain when uncertain?
+**Key Questions**
+- **Q1:** Which types of modifications contribute most to improving restoration quality (quantitative + qualitative)?
+- **Q2:** Do improvements generalize across datasets (e.g., UIEB → LSUI) and across different underwater conditions?
+- **Q3:** What is the tradeoff between visual quality and computational cost (diffusion refinement can be expensive)?
 
-We will report drop in AUC under attack (ΔAUC), worst-case accuracy across attack types, and confidence calibration suitable for legal use.
+---
 
 ## Application Area and Project Domain
-Targets include law enforcement and media forensics. Users need: a clear real/fake score, a heatmap showing where the tamper likely is, and a confidence readout (with the option to abstain when unsure).
+Underwater image restoration is important for:
+- Underwater robotics and navigation
+- Marine inspection and infrastructure monitoring (pipelines, hulls, coral surveys)
+- Underwater object detection/tracking pipelines (where enhancement improves visibility)
+- Scientific imaging and exploration (improving human interpretability and analysis)
 
-Our pipeline can also work with provenance standards (e.g., C2PA): if signed claims exist, we check them; if not, we rely on physics-style cues. This makes reports useful for internal reviews and courtroom exhibits.
+---
 
 ## What is the paper trying to do, and what are you planning to do?
-We propose UnFooled, an attack-aware detector that pairs red-team training with randomized test-time defense and two-stream features (content + residuals). During training, each batch is hit with the most damaging of several edits: JPEG re-align + recompress, tiny resampling warps, denoise→regrain (PRNU/noiseprint spoof), seam smoothing, small color/gamma shifts, and social-app transcodes. The model learns both to decide real/fake and to mark tampered pixels.
+### What the reference paper does (WF-Diff)
+WF-Diff proposes a two-stage framework:
+1. **WFI2-net (Wavelet-based Fourier Information Interaction Network)**  
+   Performs preliminary enhancement in the **wavelet space**, integrating frequency cues through wavelet decomposition and Fourier information interaction.
 
-At test time, we run a few small random transforms (resize/crop phase, gamma tweak, JPEG quality/phase), get multiple predictions, and vote. Under the hood, we use a pretrained backbone (e.g., ResNet-50) plus a forensic residual adapter and a light FPN-style mask head—fast to fine-tune, sensitive to subtle traces. We will report clean vs. attacked metrics side-by-side (ΔAUC, worst-case accuracy, IoU for localization, and calibration/ECE) on standard deepfake/tamper datasets and a surveillance-style split (low-light, heavy compression). Success = small ΔAUC, strong worst-case, and clear, judge-friendly explanations—because a detector that only works when nobody’s trying to fool it isn’t very forensic.
+2. **FRDAM (Frequency Residual Diffusion Adjustment Module)**  
+   Refines both **low-frequency** and **high-frequency** information using diffusion-based adjustment in frequency space. FRDAM is designed as a plug-and-play refinement module.
 
+### What we are planning to do
+We will build on the WF-Diff framework and contribute **research-level improvements** aimed at increasing restoration quality metrics and visual fidelity. Our repo will include:
+- Implemented model-level and/or training-level extensions to WF-Diff
+- Reproducible experiments and ablations (baseline vs our variants)
+- Quantitative results on UIEB and LSUI and qualitative comparisons
+- Clear discussion of tradeoffs (quality vs runtime)
 
-### Project Documents
-- **Presentation PDF:** [Project Presentation](/presentation.PDF)
+---
+
+## Project Documents
+- **Presentation PDF:** [Project Presentation](/presentation.pdf)
 - **Presentation PPTX:** [Project Presentation](/presentation.pptx)
-- **Term Paper PDF:** [Term Paper](/report.pdf)
+- **Term Paper PDF:** [Term Paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhao_Wavelet-based_Fourier_Information_Interaction_with_Frequency_Diffusion_Adjustment_for_Underwater_CVPR_2024_paper.pdf)
 - **Term Paper Latex Files:** [Term Paper Latex files](/report.zip)
 
+---
+
+## References
+
 ### Reference Paper
-- [High-Resolution Image Synthesis with Latent Diffusion Models](https://github.com/BRAIN-Lab-AI/Deep-Learning-Project)
-- 
-### Reference GitHub
-- [This is a reference Github](https://arxiv.org/abs/2112.10752)
+- **WF-Diff (CVPR 2024):** Wavelet-based Fourier Information Interaction with Frequency Diffusion Adjustment for Underwater Image Restoration  
+  - CVF OpenAccess (paper): https://openaccess.thecvf.com/content/CVPR2024/html/Zhao_Wavelet-based_Fourier_Information_Interaction_with_Frequency_Diffusion_Adjustment_for_Underwater_CVPR_2024_paper.html  
+  - PDF: https://openaccess.thecvf.com/content/CVPR2024/papers/Zhao_Wavelet-based_Fourier_Information_Interaction_with_Frequency_Diffusion_Adjustment_for_Underwater_CVPR_2024_paper.pdf  
+
+### Reference GitHub (Upstream Implementation)
+- **WF-Diff official repo:** https://github.com/ChenzhaoNju/WF-Diff
 
 ### Reference Dataset
-- [LAION-5B Dataset](https://laion.ai/blog/laion-5b/)
+- **UIEB (split provided by upstream):** https://pan.baidu.com/s/1BWtIPz-xUDaatsncOFCJHg?pwd=123x  
+- **LSUI (split provided by upstream):** https://pan.baidu.com/s/1-Nk8iqmOVIl3ulZTHkdpbQ?pwd=123x  
+- **Extraction code:** 123x
 
+---
 
 ## Project Technicalities
 
 ### Project UI
+- Primary usage is via **command-line training/testing scripts** (BasicSR-style).
+- Optional: notebooks or demo scripts for single-image inference and visualization.
 
 ### Terminologies
-- **Diffusion Model:** A generative model that progressively transforms random noise into coherent data.
-- **Latent Space:** A compressed, abstract representation of data where complex features are captured.
-- **UNet Architecture:** A neural network with an encoder-decoder structure featuring skip connections for better feature preservation.
-- **Text Encoder:** A model that converts text into numerical embeddings for downstream tasks.
-- **Perceptual Loss:** A loss function that measures high-level differences between images, emphasizing perceptual similarity.
-- **Tokenization:** The process of breaking down text into smaller units (tokens) for processing.
-- **Noise Vector:** A randomly generated vector used to initialize the diffusion process in generative models.
-- **Decoder:** A network component that transforms latent representations back into image space.
-- **Iterative Refinement:** The process of gradually improving the quality of generated data through multiple steps.
-- **Conditional Generation:** The process where outputs are generated based on auxiliary inputs, such as textual descriptions.
+- **UIE/UIR (Underwater Image Enhancement/Restoration):** Improving underwater images by correcting color and restoring contrast/details.
+- **Frequency Domain:** Representing images in terms of frequency components (low-frequency = structure/color, high-frequency = edges/details).
+- **Wavelet Transform (DWT/IWT):** Decomposes an image into low/high-frequency subbands; useful for targeted enhancement.
+- **Fourier Transform (FFT):** Represents an image using frequency magnitude/phase; useful for global frequency behavior.
+- **WFI2-net:** WF-Diff’s preliminary enhancement network in wavelet space.
+- **FRDAM:** WF-Diff’s diffusion-based refinement module for frequency residual adjustment.
+- **Diffusion Model:** A generative refinement process that iteratively denoises a signal to improve details/quality.
+- **PSNR / SSIM:** Standard paired image restoration metrics.
+- **LPIPS / FID:** Perceptual quality and distribution similarity metrics.
 
 ### Problem Statements
-- **Problem 1:** Achieving high-resolution and detailed images using conventional diffusion models remains challenging.
-- **Problem 2:** Existing models suffer from slow inference times during the image generation process.
-- **Problem 3:** There is limited capability in performing style transfer and generating diverse artistic variations.
+- **Problem 1:** Underwater degradations are diverse and hard to model with pixel-only methods.
+- **Problem 2:** Restoration quality can depend heavily on frequency details and cross-frequency interactions.
+- **Problem 3:** Diffusion-based refinement can improve quality but may introduce higher runtime cost.
 
 ### Loopholes or Research Areas
-- **Evaluation Metrics:** Lack of robust metrics to effectively assess the quality of generated images.
-- **Output Consistency:** Inconsistencies in output quality when scaling the model to higher resolutions.
-- **Computational Resources:** Training requires significant GPU compute resources, which may not be readily accessible.
+- **Runtime vs quality:** reducing diffusion sampling cost while maintaining quality.
+- **Generalization:** robustness across datasets and underwater conditions.
+- **Frequency modeling:** stronger cross-frequency interaction and better detail preservation.
+- **Perceptual quality:** improving perceptual metrics and reducing artifacts without harming PSNR/SSIM.
 
 ### Problem vs. Ideation: Proposed 3 Ideas to Solve the Problems
-1. **Optimized Architecture:** Redesign the model architecture to improve efficiency and balance image quality with faster inference.
-2. **Advanced Loss Functions:** Integrate novel loss functions (e.g., perceptual loss) to better capture artistic nuances and structural details.
-3. **Enhanced Data Augmentation:** Implement sophisticated data augmentation strategies to improve the model’s robustness and reduce overfitting.
+1. **Frequency-aware architecture refinement:** improve how low/high-frequency information interacts (better fusion/conditioning).
+2. **Diffusion efficiency improvements:** explore ways to reduce refinement steps or improve sampling strategy while keeping quality.
+3. **Loss and training improvements:** explore improved objectives (frequency losses, perceptual losses, consistency losses) to improve metrics and visual quality.
 
 ### Proposed Solution: Code-Based Implementation
-This repository provides an implementation of the enhanced stable diffusion model using PyTorch. The solution includes:
+This repository provides an implementation of WF-Diff-based improvements using PyTorch (BasicSR/BasicIR-style structure). The solution will include:
+- Extensions to frequency-domain processing and/or diffusion refinement modules.
+- Training and evaluation scripts/configs for baseline WF-Diff and our variants.
+- Scripts for computing metrics and generating qualitative comparisons.
 
-- **Modified UNet Architecture:** Incorporates residual connections and efficient convolutional blocks.
-- **Novel Loss Functions:** Combines Mean Squared Error (MSE) with perceptual loss to enhance feature learning.
-- **Optimized Training Loop:** Reduces computational overhead while maintaining performance.
+### Key Components (Typical Repo Structure)
+- **`basicsr/archs/`**: model architectures (WFI2-net, FRDAM, wavelet/frequency ops, and our extensions)
+- **`basicsr/models/`**: training wrappers, losses, diffusion utilities
+- **`options/train/`**: YAML configs for training
+- **`options/test/`**: YAML configs for testing
+- **`basicsr/train.py`**: training entrypoint
+- **`basicsr/test.py`**: testing entrypoint
 
-### Key Components
-- **`model.py`**: Contains the modified UNet architecture and other model components.
-- **`train.py`**: Script to handle the training process with configurable parameters.
-- **`utils.py`**: Utility functions for data processing, augmentation, and metric evaluations.
-- **`inference.py`**: Script for generating images using the trained model.
+---
 
 ## Model Workflow
-The workflow of the Enhanced Stable Diffusion model is designed to translate textual descriptions into high-quality artistic images through a multi-step diffusion process:
+WF-Diff-style restoration follows this high-level pipeline:
 
-1. **Input:**
-   - **Text Prompt:** The model takes a text prompt (e.g., "A surreal landscape with mountains and rivers") as the primary input.
-   - **Tokenization:** The text prompt is tokenized and processed through a text encoder (such as a CLIP model) to obtain meaningful embeddings.
-   - **Latent Noise:** A random latent noise vector is generated to initialize the diffusion process, which is then conditioned on the text embeddings.
+1. **Input:** underwater image  
+2. **Wavelet decomposition (DWT):** split image into low/high-frequency subbands  
+3. **Frequency preliminary enhancement (WFI2-net):** enhance frequency representations and cross-frequency interaction  
+4. **Initial enhanced image:** reconstruct coarse enhancement  
+5. **Frequency diffusion adjustment (FRDAM):** refine low/high-frequency residuals using diffusion-based adjustment  
+6. **Output:** final restored underwater image
 
-2. **Diffusion Process:**
-   - **Iterative Refinement:** The conditioned latent vector is fed into a modified UNet architecture. The model iteratively refines this vector by reversing a diffusion process, gradually reducing noise while preserving the text-conditioned features.
-   - **Intermediate States:** At each step, intermediate latent representations are produced that increasingly capture the structure and details dictated by the text prompt.
-
-3. **Output:**
-   - **Decoding:** The final refined latent representation is passed through a decoder (often part of a Variational Autoencoder setup) to generate the final image.
-   - **Generated Image:** The output is a synthesized image that visually represents the input text prompt, complete with artistic style and detail.
+---
 
 ## How to Run the Code
 
-1. **Clone the Repository:**
-    ```bash
-    git clone https://github.com/yourusername/enhanced-stable-diffusion.git
-    cd enhanced-stable-diffusion
-    ```
-
-2. **Set Up the Environment:**
-    Create a virtual environment and install the required dependencies.
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate  # On Windows use: venv\Scripts\activate
-    pip install -r requirements.txt
-    ```
-
-3. **Train the Model:**
-    Configure the training parameters in the provided configuration file and run:
-    ```bash
-    python train.py --config configs/train_config.yaml
-    ```
-
-4. **Generate Images:**
-    Once training is complete, use the inference script to generate images.
-    ```bash
-    python inference.py --checkpoint path/to/checkpoint.pt --input "A surreal landscape with mountains and rivers"
-    ```
-
-## Acknowledgments
-- **Open-Source Communities:** Thanks to the contributors of PyTorch, Hugging Face, and other libraries for their amazing work.
-- **Individuals:** Special thanks to bla, bla, bla for the amazing team effort, invaluable guidance and support throughout this project.
-- **Resource Providers:** Gratitude to ABC-organization for providing the computational resources necessary for this project.
+### 1) Clone the Repository
+```bash
+git clone https://github.com/BRAIN-Lab-AI/WaveLift-Fast-Frequency-Guided-Underwater-Restoration.git
+cd WaveLift-Fast-Frequency-Guided-Underwater-Restoration
