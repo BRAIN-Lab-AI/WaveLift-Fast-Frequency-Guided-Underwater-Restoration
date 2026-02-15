@@ -161,3 +161,39 @@ WF-Diff-style restoration follows this high-level pipeline:
 ```bash
 git clone https://github.com/BRAIN-Lab-AI/WaveLift-Fast-Frequency-Guided-Underwater-Restoration.git
 cd WaveLift-Fast-Frequency-Guided-Underwater-Restoration
+```
+### 2) Set Up the Environment
+Create and activate an environment, then install dependencies.
+```bash
+conda create -n wfdiff_ext python=3.10 -y
+conda activate wfdiff_ext
+pip install -r requirements.txt
+```
+
+3) Download Datasets
+
+Download the official splits provided by the upstream WF-Diff repository:
+
+UIEB: https://pan.baidu.com/s/1BWtIPz-xUDaatsncOFCJHg?pwd=123x
+
+LSUI: https://pan.baidu.com/s/1-Nk8iqmOVIl3ulZTHkdpbQ?pwd=123x
+
+Extraction code: 123x
+
+Place the dataset folders locally and update the dataset paths inside the YAML configs in options/.
+
+Tip: After editing paths, verify the dataloader can find images by running a short test/inference first.
+
+4) Train
+   ```bash
+   CUDA_VISIBLE_DEVICES=0 python basicsr/train.py -opt options/train/train_Wfdiff.yml
+   ```
+5) Test
+   ```bash
+   CUDA_VISIBLE_DEVICES=0 python basicsr/test.py -opt options/test/test_wfdiff.yml
+   ``` 
+6) Outputs
+
+Training logs and checkpoints are saved under the directory specified in your YAML config (usually under experiments/).
+
+Test outputs (restored images + metrics) are saved under the directory specified in the test YAML (often under results/).
