@@ -17,7 +17,7 @@ WF-Diff is a strong Underwater Image Enhancement/Restoration (UIE/UIR) framework
 
 In this project, we build on top of WF-Diff’s public implementation and aim to contribute **research-driven improvements** that enhance image restoration performance (quantitative metrics + qualitative visual quality) under consistent evaluation settings.
 
-**Introductory image (add to your repo, then link it here):**
+**Introductory image:**
 ![WF-Diff Overview](assets/intro.png)
 
 ---
