@@ -73,7 +73,7 @@ We will build on the WF-Diff framework and contribute **research-level improveme
 - **Presentation PDF:** [Project Presentation](/presentation.pdf)
 - **Presentation PPTX:** [Project Presentation](/presentation.pptx)
 - **Term Paper PDF:** [Term Paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhao_Wavelet-based_Fourier_Information_Interaction_with_Frequency_Diffusion_Adjustment_for_Underwater_CVPR_2024_paper.pdf)
-- **Term Paper Latex Files:** [Term Paper Latex files](/report.zip)
+- **Term Paper Latex Files:** [Term Paper Latex files](https://arxiv.org/src/2311.16845)
 
 ---
 
@@ -170,7 +170,7 @@ conda activate wfdiff_ext
 pip install -r requirements.txt
 ```
 
-3) Download Datasets
+### 3) Download Datasets
 
 Download the official splits provided by the upstream WF-Diff repository:
 
@@ -184,15 +184,15 @@ Place the dataset folders locally and update the dataset paths inside the YAML c
 
 Tip: After editing paths, verify the dataloader can find images by running a short test/inference first.
 
-4) Train
+### 4) Train
    ```bash
    CUDA_VISIBLE_DEVICES=0 python basicsr/train.py -opt options/train/train_Wfdiff.yml
    ```
-5) Test
+### 5) Test
    ```bash
    CUDA_VISIBLE_DEVICES=0 python basicsr/test.py -opt options/test/test_wfdiff.yml
    ``` 
-6) Outputs
+### 6) Outputs
 
 Training logs and checkpoints are saved under the directory specified in your YAML config (usually under experiments/).
 
