@@ -1,0 +1,78 @@
+# WaveFlow-UIE: Ablation — All loss weights equal (sanity check)
+# All weights set to 1.0
+
+experiment:
+  name: waveflow-uie-uieb-equal-loss
+  seed: 42
+
+data:
+  train_input: data/UIEB/train/input
+  train_target: data/UIEB/train/target
+  val_input: data/UIEB/test/input
+  val_target: data/UIEB/test/target
+  patch_size: 256
+  batch_size: 4
+  num_workers: 4
+  dataset_enlarge_ratio: 10
+
+model:
+  velocity_unet:
+    in_channels: 28
+    out_channels: 12
+    base_channels: 64
+    channel_mults: [1, 2, 4, 8]
+    num_res_blocks: 2
+    attention_resolutions: [16, 8]
+    dropout: 0.1
+    time_emb_dim: 256
+    num_groups: 32
+  physics_prior:
+    in_channels: 3
+    hidden_channels: 32
+    enabled: true
+
+flow:
+  num_inference_steps: 5
+  solver: euler
+
+training:
+  total_iters: 200000
+  grad_accum_steps: 2
+  fp16: true
+  grad_clip: 1.0
+  warmup_iters: 5000
+
+  optimizer:
+    type: AdamW
+    lr: 2.0e-4
+    weight_decay: 1.0e-4
+    betas: [0.9, 0.999]
+
+  scheduler:
+    type: CosineAnnealingLR
+    eta_min: 1.0e-6
+
+  ema:
+    target_decay: 0.999
+    warmup_decay: 0.99
+    warmup_iters: 1000
+
+  losses:
+    cfm_weight: 1.0
+    freq_weight: 1.0       # <-- equal
+    lpips_weight: 1.0       # <-- equal
+    lab_weight: 1.0         # <-- equal
+    physics_weight: 1.0     # <-- equal
+    freq_hf_weight: 2.0
+
+validation:
+  val_freq_early: 1000
+  val_freq_late: 5000
+  val_freq_threshold: 20000
+  save_img: true
+  metrics: [psnr, ssim, lpips]
+
+logging:
+  print_freq: 100
+  save_checkpoint_freq: 10000
+  sample_freq: 1000

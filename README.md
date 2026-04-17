@@ -197,3 +197,79 @@ Tip: After editing paths, verify the dataloader can find images by running a sho
 Training logs and checkpoints are saved under the directory specified in your YAML config (usually under experiments/).
 
 Test outputs (restored images + metrics) are saved under the directory specified in the test YAML (often under results/).
+
+---
+
+## How to Train the Model
+
+This repository supports two training paths:
+1. **Baseline WF-Diff** (upstream BasicSR-style trainer) — for reproducing the reference paper.
+2. **WaveFlow-UIE** (our extension) — flow-matching variant with physics prior and frequency-weighted loss.
+
+### 1) Prepare the Dataset
+Organize paired underwater images as:
+```
+data/
+└── UIEB/
+    ├── train/
+    │   ├── input/    # degraded images
+    │   └── target/   # reference (clean) images
+    └── test/
+        ├── input/
+        └── target/
+```
+Update the dataset paths in the YAML config you plan to use (`data.train_input`, `data.train_target`, `data.val_input`, `data.val_target`).
+
+### 2) Pick a Config
+
+**Baseline WF-Diff:** [options/train/train_Wfdiff.yml](options/train/train_Wfdiff.yml)
+
+**WaveFlow-UIE (our model):** choose one from [configs/](configs/):
+| Config | Purpose |
+|---|---|
+| `waveflow_uie_uieb.yaml` | Main config — physics prior on, freq LL:HF = 1:2 |
+| `waveflow_uie_no_physics.yaml` | Ablation — physics prior disabled |
+| `waveflow_uie_no_freq_weight.yaml` | Ablation — uniform frequency loss |
+| `waveflow_uie_equal_loss.yaml` | Ablation — equal weighting across loss terms |
+
+Key fields inside a config:
+- `data.patch_size`, `data.batch_size`, `data.num_workers`
+- `training.total_iters`, `training.grad_accum_steps`, `training.fp16`, `training.grad_clip`, `training.warmup_iters`
+- `training.optimizer` (AdamW lr/weight_decay/betas) and `training.scheduler` (CosineAnnealingLR)
+- `training.ema` (warmup 0.99 → target 0.999)
+- `training.losses` (CFM, frequency, LPIPS, Lab, physics weights)
+- `validation.val_freq_early/late`, `validation.metrics`
+- `logging.print_freq`, `logging.save_checkpoint_freq`
+
+### 3) Launch Training
+
+**Baseline WF-Diff:**
+```bash
+CUDA_VISIBLE_DEVICES=0 python basicsr/train.py -opt options/train/train_Wfdiff.yml
+```
+
+**WaveFlow-UIE:**
+```bash
+python -m waveflow_uie.train --config configs/waveflow_uie_uieb.yaml --seed 42
+```
+CLI flags (see [waveflow_uie/train.py:431-434](waveflow_uie/train.py#L431-L434)):
+- `--config` (required) — path to YAML config
+- `--seed` — random seed (default 42)
+- `--resume` — checkpoint path to resume from
+
+**Resume from a checkpoint:**
+```bash
+python -m waveflow_uie.train --config configs/waveflow_uie_uieb.yaml --resume experiments/<run_name>/checkpoints/latest.pt
+```
+
+### 4) Monitor Progress
+- **Console:** loss values printed every `logging.print_freq` steps.
+- **TensorBoard:** run `tensorboard --logdir experiments/<run_name>/tb` to see loss curves, LR, and validation PSNR/SSIM/LPIPS.
+- **Validation:** runs every `val_freq_early` steps initially, then `val_freq_late` after `val_freq_threshold` — metrics and sample images are logged.
+- **Checkpoints:** saved every `save_checkpoint_freq` steps under `experiments/<run_name>/checkpoints/`; best-PSNR checkpoint is tracked separately.
+
+### 5) Training Notes
+- Mixed precision (FP16) with gradient scaling is on by default — disable via `training.fp16: false` if you hit numerical issues.
+- Effective batch size = `batch_size * grad_accum_steps`.
+- The trainer has built-in NaN recovery (reloads latest checkpoint and reduces LR).
+- For ablations, keep `experiment.seed` fixed across runs so comparisons are fair.

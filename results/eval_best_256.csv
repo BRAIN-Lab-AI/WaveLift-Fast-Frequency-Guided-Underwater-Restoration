@@ -1,0 +1,2 @@
+solver,steps,inference_time_ms,psnr,ssim,lpips,uciqe,uiqm,fid
+euler,5,54.81,24.7426,0.9255,0.1435,0.5828,4.0797,30.8194
