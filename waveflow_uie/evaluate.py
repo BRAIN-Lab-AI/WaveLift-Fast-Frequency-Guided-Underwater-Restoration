@@ -31,6 +31,10 @@ DATASET_PRESETS = {
         'input_dir': 'data/LSUI/test/input',
         'target_dir': 'data/LSUI/test/GT',
     },
+    'both_test': {
+        'input_dir': 'data/Both/test/input',
+        'target_dir': 'data/Both/test/target',
+    },
 }
 
 

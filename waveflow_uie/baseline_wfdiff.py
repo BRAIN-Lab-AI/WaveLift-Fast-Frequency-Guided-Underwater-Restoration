@@ -35,8 +35,6 @@ def run_baseline(args):
 
     # Import WF-Diff components
     from basicsr.archs import build_network
-    from basicsr.data.paired_image_dataset import PairedImageDataset
-    from basicsr.utils import img2tensor, tensor2img
 
     # DWT/IWT from WF-Diff (batch-concat version)
     from basicsr.archs.Padiff_arch.wavelet import DWT, IWT
@@ -109,13 +107,17 @@ def run_baseline(args):
         img_lq_rgb = cv2.cvtColor(img_lq, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
         img_gt_rgb = cv2.cvtColor(img_gt, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
 
-        # Pad to multiple of 8
-        h, w = img_lq_rgb.shape[:2]
-        new_h = h - (h % 8) if h % 8 != 0 else h
-        new_w = w - (w % 8) if w % 8 != 0 else w
-        if new_h != h or new_w != w:
-            img_lq_rgb = cv2.resize(img_lq_rgb, (new_w, new_h), interpolation=cv2.INTER_AREA)
-            img_gt_rgb = cv2.resize(img_gt_rgb, (new_w, new_h), interpolation=cv2.INTER_AREA)
+        if args.resize > 0:
+            img_lq_rgb = cv2.resize(img_lq_rgb, (args.resize, args.resize), interpolation=cv2.INTER_AREA)
+            img_gt_rgb = cv2.resize(img_gt_rgb, (args.resize, args.resize), interpolation=cv2.INTER_AREA)
+        else:
+            # Pad to multiple of 8
+            h, w = img_lq_rgb.shape[:2]
+            new_h = h - (h % 8) if h % 8 != 0 else h
+            new_w = w - (w % 8) if w % 8 != 0 else w
+            if new_h != h or new_w != w:
+                img_lq_rgb = cv2.resize(img_lq_rgb, (new_w, new_h), interpolation=cv2.INTER_AREA)
+                img_gt_rgb = cv2.resize(img_gt_rgb, (new_w, new_h), interpolation=cv2.INTER_AREA)
 
         # To tensor CHW
         lq_tensor = torch.from_numpy(img_lq_rgb.transpose(2, 0, 1)).unsqueeze(0).to(device)
@@ -200,6 +202,9 @@ def main():
     parser.add_argument('--target-dir', type=str, default=None, help='Custom target directory')
     parser.add_argument('--output', type=str, default='results/wfdiff_baseline',
                         help='Output directory')
+    parser.add_argument('--resize', type=int, default=0,
+                        help='Resize all images to NxN before inference (0 = keep native resolution). '
+                             'Standard for benchmarking: 256.')
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
     args = parser.parse_args()
     run_baseline(args)

@@ -16,8 +16,8 @@ import torch
 import torch.nn as nn
 
 import numpy as np
-from utils.diff_util import *
-from utils.img_util import rgb_to_hsv_tensor
+from basicsr.utils.diff_util import *
+from basicsr.utils.img_util import rgb_to_hsv_tensor
 
 
 def Normalize(x):
