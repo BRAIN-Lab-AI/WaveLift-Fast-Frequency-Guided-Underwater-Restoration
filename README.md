@@ -1,4 +1,4 @@
-# WF-Diff Extensions: Improving Underwater Image Restoration Metrics
+# WaveFlow-UIE: A Single-Pipeline Frequency-Guided Flow Model for Underwater Image Restoration
 
 ## Project Metadata
 ### Authors
@@ -203,16 +203,25 @@ The strongest defensible reading of this repository is:
 Use this section as the placeholder for the final report tables.
 
 ### Table A - UIEB and LSUI at 256x256
-- source: [results/report/table_a_uieb_lsui_256.tex](results/report/table_a_uieb_lsui_256.tex)
+
+<img width="1155" height="311" alt="image" src="https://github.com/user-attachments/assets/0a2cb641-65fe-4fef-8f02-4c29620214ef" />
+
+
 
 ### Table B - UIEB and LSUI at native resolution
-- source: [results/report/table_a_uieb_lsui_native.tex](results/report/table_a_uieb_lsui_native.tex)
+
+<img width="1151" height="234" alt="image" src="https://github.com/user-attachments/assets/f1e8e02e-1a4a-4f15-9197-3ec1525a82ee" />
+
 
 ### Table C - UFO-120, EUVP, U45, and C60 at 256x256
-- source: [results/report/table_b_other_datasets_256.tex](results/report/table_b_other_datasets_256.tex)
+
+<img width="1238" height="219" alt="image" src="https://github.com/user-attachments/assets/2e4ba2c7-cd4c-4975-abef-eb3c6a180b79" />
+
 
 ### Table D - Inference time
-- source: [results/report/table_runtime_uieb_lsui.tex](results/report/table_runtime_uieb_lsui.tex)
+
+<img width="740" height="296" alt="image" src="https://github.com/user-attachments/assets/9f2f02c8-90d6-4418-97bf-72f87c171d06" />
+
 
 ---
 
