@@ -18,7 +18,8 @@ WF-Diff is a strong Underwater Image Enhancement/Restoration (UIE/UIR) framework
 In this project, we build on top of WF-Diff's public implementation and contribute **WaveFlow-UIE**, a wavelet-domain flow-based extension aimed at improving restoration quality and runtime under a consistent benchmark protocol.
 
 **Introductory image:**
-![WF-Diff Overview](assets/intro.png)
+<img width="1000" height="321" alt="image" src="https://github.com/user-attachments/assets/345b1d1b-5654-44e9-b623-926cac665196" />
+
 
 ---
 
@@ -195,6 +196,62 @@ Grouped as:
 The strongest defensible reading of this repository is:
 
 > Under a unified reproduced benchmark on public splits and public checkpoints, WaveFlow-UIE improves over the released WF-Diff baseline in quality-speed tradeoff and remains competitive with strong feedforward underwater enhancement baselines.
+
+---
+
+## Model Architecture
+
+WaveFlow-UIE is the main model in this repository. It is a **wavelet-domain rectified flow** model for underwater image enhancement.
+
+Core files:
+- [waveflow_uie/models/waveflow.py](waveflow_uie/models/waveflow.py)
+- [waveflow_uie/models/physics_prior.py](waveflow_uie/models/physics_prior.py)
+- [waveflow_uie/models/velocity_unet.py](waveflow_uie/models/velocity_unet.py)
+- [waveflow_uie/losses.py](waveflow_uie/losses.py)
+
+<img width="1609" height="702" alt="image" src="https://github.com/user-attachments/assets/085ae2cb-9aab-40b2-a177-1fefb01a5413" />
+
+### What the model does
+1. **Wavelet decomposition**
+   - the degraded RGB image is converted into a 12-channel Haar wavelet representation
+   - this separates low-frequency structure/color from high-frequency detail
+
+2. **Physics prior branch**
+   - a lightweight CNN predicts:
+     - transmission map `t(x)`
+     - ambient light `A`
+   - these estimates are used as conditioning signals for the enhancement backbone
+
+3. **Velocity prediction in wavelet space**
+   - a `VelocityUNet` predicts enhancement velocity directly in wavelet space
+   - unlike the heavier WF-Diff refinement process, WaveFlow uses rectified flow / conditional flow matching
+
+4. **Small-step flow inference**
+   - the wavelet state is updated over a small number of ODE steps
+   - the default WaveFlow checkpoints use:
+     - `solver = euler`
+     - `num_inference_steps = 5`
+
+5. **Inverse wavelet reconstruction**
+   - the enhanced wavelet representation is mapped back to RGB with inverse Haar DWT
+
+### Training losses
+WaveFlow-UIE combines:
+- flow matching loss
+- frequency-weighted wavelet loss
+- LPIPS perceptual loss
+- Lab color consistency loss
+- optional physics auxiliary loss
+
+### WaveFlow checkpoints used in this project
+- **WaveFlow UIEB**
+  - specialist checkpoint for `UIEB`
+- **WaveFlow LSUI**
+  - specialist checkpoint for `LSUI`
+  - also used on `UFO-120` and `EUVP`
+- **WaveFlow BOTH**
+  - mixed-data checkpoint for `UIEB + LSUI`
+  - mainly used on `U45` and `C60`
 
 ---
 
