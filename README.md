@@ -70,7 +70,7 @@ We will build on the WF-Diff framework and contribute **research-level improveme
 ---
 
 ## Project Documents
-- **Presentation PDF:** [Project Presentation](./CVProjectPresentation1.pdf)
+- **Presentation PDF:** [Project Presentation](./ICS472-ProjectPresnetationFinal.pdf)
 - **Presentation PPTX:** [Project Presentation](./CVProjectPresentation1.pptx)
 - **Term Paper PDF:** [Term Paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhao_Wavelet-based_Fourier_Information_Interaction_with_Frequency_Diffusion_Adjustment_for_Underwater_CVPR_2024_paper.pdf)
 - **Term Paper Latex Files:** [Term Paper Latex files](https://arxiv.org/src/2311.16845)
