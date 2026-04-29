@@ -1,8 +1,8 @@
 # Data and outputs
-data/
-experiments/
-tb_logger/
-pretrained/
+/data/
+/experiments/
+/tb_logger/
+/pretrained/
 
 # Python
 __pycache__/

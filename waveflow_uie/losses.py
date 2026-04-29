@@ -13,9 +13,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import Dict, Optional
 
-import lpips
-
-
 # ---------------------------------------------------------------------------
 # Color space conversion: RGB -> CIELAB (differentiable, FP32)
 # ---------------------------------------------------------------------------
@@ -101,6 +98,8 @@ class LPIPSLoss(nn.Module):
 
     def __init__(self):
         super().__init__()
+        import lpips
+
         self.lpips_net = lpips.LPIPS(net='alex', verbose=False)
         self.lpips_net.eval()
         for p in self.lpips_net.parameters():
@@ -189,7 +188,7 @@ class WaveFlowLoss(nn.Module):
 
         self.cfm_loss = CFMLoss()
         self.freq_loss = FreqWeightedLoss(hf_weight=freq_hf_weight)
-        self.lpips_loss = LPIPSLoss()
+        self.lpips_loss = LPIPSLoss() if lpips_weight > 0 else None
         self.lab_loss = LabColorLoss()
         self.physics_loss = PhysicsLoss()
 
@@ -218,7 +217,10 @@ class WaveFlowLoss(nn.Module):
         losses['freq'] = self.freq_loss(outputs['v_pred'], outputs['v_target'])
 
         # 3. LPIPS loss
-        losses['lpips'] = self.lpips_loss(outputs['pred_rgb'], gt)
+        if self.lpips_loss is not None and self.lpips_weight > 0:
+            losses['lpips'] = self.lpips_loss(outputs['pred_rgb'], gt)
+        else:
+            losses['lpips'] = torch.tensor(0.0, device=gt.device)
 
         # 4. Lab color loss
         losses['lab'] = self.lab_loss(outputs['pred_rgb'], gt)

@@ -103,13 +103,20 @@ class WaveFlowUIE(nn.Module):
         """Inference: enhance degraded image via ODE integration.
 
         Args:
-            lq: Degraded RGB, shape (B, 3, H, W). H, W must be even.
+            lq: Degraded RGB, shape (B, 3, H, W). Odd spatial sizes are padded
+                internally and cropped back after reconstruction.
             num_steps: Number of ODE steps. Default: 5.
             solver: 'euler' or 'midpoint'. Default: 'euler'.
 
         Returns:
             Enhanced RGB, shape (B, 3, H, W), clamped to [0, 1].
         """
+        orig_h, orig_w = lq.shape[-2:]
+        pad_h = orig_h % 2
+        pad_w = orig_w % 2
+        if pad_h or pad_w:
+            lq = F.pad(lq, (0, pad_w, 0, pad_h), mode='reflect')
+
         w_lq = self.dwt(lq)
         target_size = (w_lq.shape[2], w_lq.shape[3])
         physics_cond, _, _ = self.physics_prior(lq, target_size=target_size)
@@ -142,4 +149,5 @@ class WaveFlowUIE(nn.Module):
                 raise ValueError(f"Unknown solver: {solver}. Use 'euler' or 'midpoint'.")
 
         enhanced = self.idwt(w)
+        enhanced = enhanced[..., :orig_h, :orig_w]
         return enhanced.clamp(0.0, 1.0)

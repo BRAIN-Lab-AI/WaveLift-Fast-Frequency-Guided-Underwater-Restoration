@@ -209,7 +209,13 @@ def train(config: dict, seed: int = 42, resume: str = None) -> None:
         is_train=False,
         enlarge_ratio=1,
     )
-    val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False, num_workers=2)
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=1,
+        shuffle=False,
+        num_workers=data_cfg.get('num_workers', 2),
+        pin_memory=True,
+    )
 
     # Model
     model = build_model(config).to(device)
