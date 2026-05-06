@@ -115,8 +115,8 @@ WaveFlow-UIE combines:
 ---
 
 ## Project Documents
-- **Presentation PDF:** [Project Presentation](./ICS472-ProjectPresnetation_V2.pdf)
-- **Presentation PPTX:** [Project Presentation](./CVProjectPresentation1.pptx)
+- **Presentation PDF:** [Project Presentation](./ICS483-ProjectPresnetation-Final.pdf)
+- **Presentation PPTX:** [Project Presentation](./ICS483-ProjectPresnetation-Final.pptx)
 - **Term Paper PDF:** [WaveFlow-UIE](./Computer_Vision_Project.pdf)
 - **Term Paper Latex Files:** [Term Paper Latex files](./LatexFiles.zip)
 
