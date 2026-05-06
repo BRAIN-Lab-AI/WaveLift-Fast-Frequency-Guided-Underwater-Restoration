@@ -117,9 +117,8 @@ WaveFlow-UIE combines:
 ## Project Documents
 - **Presentation PDF:** [Project Presentation](./ICS472-ProjectPresnetation_V2.pdf)
 - **Presentation PPTX:** [Project Presentation](./CVProjectPresentation1.pptx)
-- **Term Paper PDF:** [Term Paper](https://openaccess.thecvf.com/content/CVPR2024/papers/Zhao_Wavelet-based_Fourier_Information_Interaction_with_Frequency_Diffusion_Adjustment_for_Underwater_CVPR_2024_paper.pdf)
-- **Term Paper Latex Files:** [Term Paper Latex files](https://arxiv.org/src/2311.16845)
-- **Our paper:** [WaveFlow-UIE](./Computer_Vision_Project.pdf)
+- **Term Paper PDF:** [WaveFlow-UIE](./Computer_Vision_Project.pdf)
+- **Term Paper Latex Files:** [Term Paper Latex files](./LatexFiles.zip)
 
 ---
 
