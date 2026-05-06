@@ -261,8 +261,7 @@ Use this section as the placeholder for the final report tables.
 
 ### Table A - UIEB and LSUI at 256x256
 
-<img width="1155" height="311" alt="image" src="https://github.com/user-attachments/assets/0a2cb641-65fe-4fef-8f02-4c29620214ef" />
-
+<img width="1323" height="376" alt="image" src="https://github.com/user-attachments/assets/e9e4d0e1-bf7d-40e3-9298-8654f81ad6c1" />
 
 
 ### Table B - UIEB and LSUI at native resolution
